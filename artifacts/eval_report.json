@@ -1,0 +1,312 @@
+{
+  "metrics": {
+    "total_cases": 30,
+    "guardrail_accuracy": 1.0,
+    "source_coverage": 1.0,
+    "source_presence_rate": 1.0,
+    "source_expected_cases": 30,
+    "non_empty_rate": 1.0
+  },
+  "details": [
+    {
+      "id": "E001",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Política de Segurança Clínica"
+      ]
+    },
+    {
+      "id": "E002",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E003",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E004",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E005",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E006",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E007",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Política de Segurança Clínica"
+      ]
+    },
+    {
+      "id": "E008",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E009",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E010",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Política de Segurança Clínica"
+      ]
+    },
+    {
+      "id": "E011",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E012",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E013",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E014",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E015",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E016",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E017",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E018",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E019",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E020",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Fluxo Dor Torácica v2",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E021",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Protocolo Interno de Sepse v3",
+        "Política de Segurança Clínica"
+      ]
+    },
+    {
+      "id": "E022",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E023",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E024",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E025",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E026",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E027",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E028",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Protocolo Interno de Sepse v3"
+      ]
+    },
+    {
+      "id": "E029",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    },
+    {
+      "id": "E030",
+      "guardrail_ok": true,
+      "source_ok": true,
+      "source_presence_ok": true,
+      "sources": [
+        "Política de Segurança Clínica",
+        "Fluxo Dor Torácica v2"
+      ]
+    }
+  ]
+}
