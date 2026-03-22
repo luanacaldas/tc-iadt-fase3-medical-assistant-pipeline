@@ -1,22 +1,28 @@
 # Tech Challenge IADT - Fase 3
 
-Projeto base para o desafio de **assistente médico com LLM customizada + LangChain**, cobrindo:
+Projeto de **assistente médico com LLM customizada + LangChain**, cobrindo:
 
-1. Fine-tuning com dados internos (pipeline pronto para LoRA).
-2. Assistente clínico com LangChain (RAG + SQL + contexto do paciente).
-3. Segurança, validação humana, logging e explainability.
-
-## Decisão prática: Colab ou VS Code?
-
-### Recomendação objetiva
-- **Continue no VS Code** para desenvolver o sistema completo (arquitetura, LangChain, segurança, logs, banco).
-- Use **Colab apenas para o treinamento pesado** (fine-tuning) se faltar GPU local.
-
-Isso facilita porque o desafio não é só treinar modelo: também exige integração, auditoria e fluxo clínico automatizado.
+1. ✅ **Fine-tuning com dados internos** (pipeline LoRA em `src/finetune/`)
+2. ✅ **Assistente clínico com LangChain** (LCEL chains com RAG + SQL em `src/assistant/medical_assistant.py`)
+3. ✅ **Segurança, validação humana, logging e explainability** (guardrails + auditoria)
 
 ---
 
-## Arquitetura proposta
+## 📚 Documentação
+
+- **[TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)** - Relatório técnico detalhado com explicação do fine-tuning, descrição do assistente, diagrama LangChain e avaliação
+- **[ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)** - Diagrama do fluxo LangChain
+- **[DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md)** - Notas de desenvolvimento com decisões técnicas
+- **[VIDEO_SCRIPT.md](VIDEO_SCRIPT.md)** - Script para vídeo demonstrativo (15 min) com comandos prontos
+
+## 🎬 Demonstração e Reprodução
+
+- **[Google Colab Notebook](https://colab.research.google.com/drive/1lrZmIprOIIt5TlUP62UG_vDMSn6Pvqi9?usp=sharing)** - Pipeline completo de treino + avaliação rodando em GPU T4 (20 min)
+  - Célula 1: Setup e instalação
+  - Célula 2: Treino LoRA + Avaliação acadêmica
+  - Célula 3: Download dos artifacts
+
+---
 
 - `src/data/`: ingestão, curadoria, anonimização e geração de dataset de treino.
 - `src/finetune/`: script de fine-tuning LoRA (Hugging Face/PEFT).
@@ -26,6 +32,7 @@ Isso facilita porque o desafio não é só treinar modelo: também exige integra
 - `src/main.py`: execução de exemplo ponta-a-ponta.
 
 Fluxo principal:
+
 1. Recebe dados do paciente.
 2. Consulta pendências de exame no banco SQL.
 3. Recupera protocolos internos relevantes via RAG.
@@ -33,6 +40,51 @@ Fluxo principal:
 5. Aplica validações de segurança.
 6. Retorna resposta com fontes + alerta de validação humana.
 7. Registra tudo em log de auditoria.
+
+---
+
+## Requisitos
+
+- Python 3.11+
+- (Opcional) GPU para fine-tuning
+
+## Stack Tecnológico
+
+| Componente            | Tecnologia                | Localização                             |
+| --------------------- | ------------------------- | --------------------------------------- |
+| **Fine-tuning**       | PEFT LoRA                 | `src/finetune/train_lora.py`            |
+| **Ingestão de Dados** | HF Datasets + XML parsing | `src/data/`                             |
+| **Orquestração**      | **LangChain LCEL**        | `src/assistant/medical_assistant.py` ✅ |
+| **RAG**               | BM25 + Similarity Search  | `src/assistant/knowledge_base.py`       |
+| **BD Paciente**       | SQLAlchemy + SQLite       | `src/assistant/patient_repository.py`   |
+| **Guardrails**        | Regex + Keywords          | `src/security/guardrails.py`            |
+| **Logging**           | JSON estruturado          | `src/observability/audit_logger.py`     |
+| **Avaliação**         | Métricas acadêmicas       | `src/evaluation/`                       |
+
+### Uso de LangChain ✅
+
+Sistema implementa **LangChain Expression Language (LCEL)**:
+
+```python
+# src/assistant/medical_assistant.py
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnableLambda
+
+class MedicalAssistant:
+    # Chain LangChain:
+    # [Input] → [_build_inputs] → [_generate_answer] → [Output JSON]
+    self.chain = RunnableLambda(self._build_inputs) | RunnableLambda(self._generate_answer)
+
+    def ask(self, patient_id: str, question: str) -> dict:
+        return self.chain.invoke({...})  # Executa pipeline LCEL
+```
+
+**Componentes:**
+
+- `ChatPromptTemplate` ✅
+- `RunnableLambda` ✅
+- LCEL Chain composition ✅
+- Integração com RAG ✅
 
 ---
 
@@ -133,7 +185,12 @@ permitindo medir de forma mais robusta cobertura de fontes e guardrails.
 - Coloque os novos pares em `data/raw/internal_clinical_qa.jsonl` no formato:
 
 ```json
-{"input":"pergunta", "output":"resposta", "source":"Protocolo X", "domain":"specialty"}
+{
+  "input": "pergunta",
+  "output": "resposta",
+  "source": "Protocolo X",
+  "domain": "specialty"
+}
 ```
 
 - O comando `python -m src.data.build_training_dataset` já combina automaticamente:
@@ -155,18 +212,21 @@ permitindo medir de forma mais robusta cobertura de fontes e guardrails.
 ## Como isso atende os requisitos obrigatórios
 
 ### 1) Fine-tuning de LLM com dados médicos internos
+
 - Pipeline de preprocessing/anonimização em `src/data/preprocess.py`.
 - Conversão e curadoria do MedQuAD em `src/data/convert_medquad.py`.
 - Curadoria e montagem de dataset instrucional em `src/data/build_training_dataset.py`.
 - Script de fine-tuning LoRA em `src/finetune/train_lora.py`.
 
 ### 2) Assistente médico com LangChain
+
 - Pipeline integrado em `src/assistant/medical_assistant.py`.
 - Consulta SQL (prontuário/pendências) em `src/assistant/patient_repository.py`.
 - Fluxo de decisão automatizado em `src/assistant/workflow.py`.
 - Contextualização por paciente + documentos internos no prompt.
 
 ### 3) Segurança e validação
+
 - Guardrails em `src/security/guardrails.py`.
 - Logging e auditoria em `src/observability/audit_logger.py`.
 - Explainability via citação explícita de fontes na resposta.
