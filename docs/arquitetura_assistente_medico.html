@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Arquitetura — Assistente Médico</title>
+<style>
+  body { margin: 0; padding: 24px; font-family: sans-serif; background: #fff; display: flex; justify-content: center; }
+  svg { max-width: 680px; width: 100%; }
+
+  .arr { stroke: #73726c; stroke-width: 1.5; fill: none; }
+  .leader { stroke: #73726c; stroke-width: 0.5; fill: none; stroke-dasharray: 4 3; }
+
+  /* c-gray */
+  .c-gray rect, .c-gray circle, .c-gray ellipse { fill: #F1EFE8; stroke: #5F5E5A; }
+  .c-gray .th, .c-gray .ts { fill: #444441; }
+
+  /* c-coral */
+  .c-coral rect { fill: #FAECE7; stroke: #993C1D; }
+  .c-coral .th, .c-coral .ts { fill: #712B13; }
+
+  /* c-red */
+  .c-red rect { fill: #FCEBEB; stroke: #A32D2D; }
+  .c-red .th, .c-red .ts { fill: #791F1F; }
+
+  /* c-purple */
+  .c-purple rect { fill: #EEEDFE; stroke: #534AB7; }
+  .c-purple .th, .c-purple .ts { fill: #3C3489; }
+
+  /* c-teal */
+  .c-teal rect { fill: #E1F5EE; stroke: #0F6E56; }
+  .c-teal .th, .c-teal .ts { fill: #085041; }
+
+  .th { font-size: 14px; font-weight: 500; font-family: sans-serif; }
+  .ts { font-size: 12px; font-weight: 400; font-family: sans-serif; fill: #5F5E5A; }
+
+  .node { cursor: pointer; }
+  .node:hover rect { opacity: 0.85; }
+
+  @media (prefers-color-scheme: dark) {
+    body { background: #1a1a1a; }
+    .c-gray rect  { fill: #444441; stroke: #B4B2A9; }
+    .c-gray .th, .c-gray .ts { fill: #D3D1C7; }
+    .c-coral rect { fill: #4A1B0C; stroke: #F0997B; }
+    .c-coral .th, .c-coral .ts { fill: #F5C4B3; }
+    .c-red rect   { fill: #501313; stroke: #F09595; }
+    .c-red .th, .c-red .ts { fill: #F7C1C1; }
+    .c-purple rect { fill: #26215C; stroke: #AFA9EC; }
+    .c-purple .th, .c-purple .ts { fill: #CECBF6; }
+    .c-teal rect  { fill: #04342C; stroke: #5DCAA5; }
+    .c-teal .th, .c-teal .ts { fill: #9FE1CB; }
+    .arr { stroke: #B4B2A9; }
+    .leader { stroke: #B4B2A9; }
+    .ts { fill: #B4B2A9; }
+  }
+</style>
+</head>
+<body>
+<svg width="100%" viewBox="0 0 680 720" xmlns="http://www.w3.org/2000/svg">
+<defs>
+  <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+    <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+  </marker>
+</defs>
+
+<!-- ENTRADA -->
+<g class="node c-gray">
+  <rect x="230" y="20" width="220" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="42" text-anchor="middle" dominant-baseline="central">Usuário</text>
+</g>
+
+<line x1="340" y1="64" x2="340" y2="98" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="354" y="86" dominant-baseline="central">pergunta clínica</text>
+
+<!-- GUARDRAILS -->
+<g class="node c-coral">
+  <rect x="205" y="98" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="118" text-anchor="middle" dominant-baseline="central">Guardrails</text>
+  <text class="ts" x="340" y="138" text-anchor="middle" dominant-baseline="central">Validação de segurança</text>
+</g>
+
+<line x1="475" y1="126" x2="580" y2="126" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="519" y="120" dominant-baseline="central">bloqueio</text>
+
+<!-- REJEITADO -->
+<g class="node c-red">
+  <rect x="580" y="104" width="80" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="620" y="126" text-anchor="middle" dominant-baseline="central">Rejeitado</text>
+</g>
+
+<line x1="340" y1="154" x2="340" y2="190" class="arr" marker-end="url(#arrow)"/>
+<text class="ts" x="354" y="176" dominant-baseline="central">aprovado</text>
+
+<!-- SQL QUERY -->
+<g class="node c-purple">
+  <rect x="205" y="190" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="210" text-anchor="middle" dominant-baseline="central">Consulta SQL</text>
+  <text class="ts" x="340" y="230" text-anchor="middle" dominant-baseline="central">Contexto do paciente</text>
+</g>
+
+<!-- Banco de dados (fonte) -->
+<g class="node c-gray">
+  <rect x="20" y="198" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="95" y="215" text-anchor="middle" dominant-baseline="central">Banco de dados</text>
+  <text class="ts" x="95" y="231" text-anchor="middle" dominant-baseline="central">SQLite — pacientes</text>
+</g>
+<line x1="170" y1="220" x2="203" y2="220" class="leader" marker-end="url(#arrow)"/>
+
+<line x1="340" y1="246" x2="340" y2="282" class="arr" marker-end="url(#arrow)"/>
+
+<!-- RAG SEARCH -->
+<g class="node c-purple">
+  <rect x="205" y="282" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="302" text-anchor="middle" dominant-baseline="central">Busca RAG</text>
+  <text class="ts" x="340" y="322" text-anchor="middle" dominant-baseline="central">Recuperação de documentos</text>
+</g>
+
+<!-- Knowledge Base (fonte) -->
+<g class="node c-gray">
+  <rect x="20" y="290" width="150" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="95" y="307" text-anchor="middle" dominant-baseline="central">Base de conhecimento</text>
+  <text class="ts" x="95" y="323" text-anchor="middle" dominant-baseline="central">MedQuAD 16.4 k QA</text>
+</g>
+<line x1="170" y1="312" x2="203" y2="312" class="leader" marker-end="url(#arrow)"/>
+
+<line x1="340" y1="338" x2="340" y2="374" class="arr" marker-end="url(#arrow)"/>
+
+<!-- PROMPT BUILDER -->
+<g class="node c-teal">
+  <rect x="205" y="374" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="394" text-anchor="middle" dominant-baseline="central">Montagem do prompt</text>
+  <text class="ts" x="340" y="414" text-anchor="middle" dominant-baseline="central">Contextualização completa</text>
+</g>
+
+<line x1="340" y1="430" x2="340" y2="466" class="arr" marker-end="url(#arrow)"/>
+
+<!-- LLM -->
+<g class="node c-teal">
+  <rect x="205" y="466" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="486" text-anchor="middle" dominant-baseline="central">LLM fine-tuned</text>
+  <text class="ts" x="340" y="506" text-anchor="middle" dominant-baseline="central">Phi-3 + LoRA</text>
+</g>
+
+<line x1="340" y1="522" x2="340" y2="558" class="arr" marker-end="url(#arrow)"/>
+
+<!-- POST-PROCESSOR -->
+<g class="node c-gray">
+  <rect x="205" y="558" width="270" height="56" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="578" text-anchor="middle" dominant-baseline="central">Pós-processamento</text>
+  <text class="ts" x="340" y="598" text-anchor="middle" dominant-baseline="central">Extração de fontes + JSON</text>
+</g>
+
+<!-- Audit Log -->
+<line x1="475" y1="586" x2="575" y2="586" class="leader" marker-end="url(#arrow)"/>
+<g class="node c-gray">
+  <rect x="575" y="564" width="90" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="620" y="580" text-anchor="middle" dominant-baseline="central">Audit log</text>
+  <text class="ts" x="620" y="596" text-anchor="middle" dominant-baseline="central">JSON + timestamp</text>
+</g>
+
+<line x1="340" y1="614" x2="340" y2="650" class="arr" marker-end="url(#arrow)"/>
+
+<!-- RESPOSTA FINAL -->
+<g class="node c-gray">
+  <rect x="230" y="650" width="220" height="44" rx="8" stroke-width="0.5"/>
+  <text class="th" x="340" y="672" text-anchor="middle" dominant-baseline="central">Resposta ao médico</text>
+</g>
+
+<!-- Métricas -->
+<text class="ts" x="580" y="664" text-anchor="start" dominant-baseline="central">~245 ms</text>
+<text class="ts" x="580" y="678" text-anchor="start" dominant-baseline="central">99% acurácia</text>
+<text class="ts" x="580" y="692" text-anchor="start" dominant-baseline="central">100% cobertura</text>
+</svg>
+</body>
+</html>

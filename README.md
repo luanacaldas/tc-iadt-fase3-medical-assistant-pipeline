@@ -10,25 +10,31 @@ Projeto de **assistente médico com LLM customizada + LangChain**, cobrindo:
 
 ## 📚 Documentação
 
-- **[TECHNICAL_REPORT.md](TECHNICAL_REPORT.md)** - Relatório técnico detalhado com explicação do fine-tuning, descrição do assistente, diagrama LangChain e avaliação
-- **[ARCHITECTURE_DIAGRAM.md](ARCHITECTURE_DIAGRAM.md)** - Diagrama do fluxo LangChain
-- **[DEVELOPMENT_NOTES.md](DEVELOPMENT_NOTES.md)** - Notas de desenvolvimento com decisões técnicas
-- **[VIDEO_SCRIPT.md](VIDEO_SCRIPT.md)** - Script para vídeo demonstrativo (15 min) com comandos prontos
+- **[docs/INDEX.md](docs/INDEX.md)** - Índice de navegação dos entregáveis e atalhos rápidos
+- **[docs/TECHNICAL_REPORT.md](docs/TECHNICAL_REPORT.md)** - Relatório técnico detalhado com explicação do fine-tuning, descrição do assistente, diagrama LangChain e avaliação
+- **[docs/arquitetura_assistente_medico.mmd](docs/arquitetura_assistente_medico.mmd)** - Diagrama do fluxo LangChain em Mermaid (fonte editável)
+- **[docs/arquitetura_assistente_medico.html](docs/arquitetura_assistente_medico.html)** - Diagrama do fluxo LangChain em versão renderizada
+- **[docs/COLAB_NOTEBOOK.md](docs/COLAB_NOTEBOOK.md)** - Guia de execução e reprodução no Colab
 
 ## 🎬 Demonstração e Reprodução
 
-- **[Google Colab Notebook](https://colab.research.google.com/drive/1lrZmIprOIIt5TlUP62UG_vDMSn6Pvqi9?usp=sharing)** - Pipeline completo de treino + avaliação rodando em GPU T4 (20 min)
+- **[📺 Vídeo de Demonstração](https://youtu.be/vYB2mnsHh8c)** - Apresentação completa do assistente médico
+- **[Google Colab Notebook](https://colab.research.google.com/drive/1tYl1FrsS4Z60Lhsbge5t9sP79scWwFcX?usp=sharing)** - Pipeline completo de treino + avaliação rodando em GPU T4 (20 min)
   - Célula 1: Setup e instalação
   - Célula 2: Treino LoRA + Avaliação acadêmica
   - Célula 3: Download dos artifacts
 
 ---
 
+## Estrutura do Projeto
+
+- `docs/`: documentação técnica, índice, guia Colab e diagramas de arquitetura.
 - `src/data/`: ingestão, curadoria, anonimização e geração de dataset de treino.
 - `src/finetune/`: script de fine-tuning LoRA (Hugging Face/PEFT).
 - `src/assistant/`: orquestração LangChain (RAG + SQL + guardrails).
 - `src/security/`: regras de segurança e limites de atuação.
 - `src/observability/`: logging estruturado e trilha de auditoria.
+- `artifacts/`: relatórios de avaliação gerados pelo pipeline.
 - `src/main.py`: execução de exemplo ponta-a-ponta.
 
 Fluxo principal:
@@ -40,6 +46,49 @@ Fluxo principal:
 5. Aplica validações de segurança.
 6. Retorna resposta com fontes + alerta de validação humana.
 7. Registra tudo em log de auditoria.
+
+---
+
+## 🤔 Por que essas decisões?
+
+### Fine-tuning com LoRA (e não treinar tudo)
+
+Quando comecei, a pergunta era: como treinar um modelo em domínio médico sem uma GPU cara?
+
+**LoRA** permite adaptar um modelo de 7B parâmetros treinando apenas 1% deles (rank 16). Resultado: treina em T4 do Colab em 20 minutos. A qualidade é 85-90% comparada ao fine-tuning completo, mas a praticidade é muito maior. Qualquer pessoa consegue reproduzir.
+
+Se tivesse tentado full fine-tuning, levaria dias e precisaria de uma GPU cara. LoRA é pragmatismo.
+
+### RAG + SQL combinados
+
+Uma resposta clínica precisa de contexto de 3 fontes:
+
+1. **RAG (MedQuAD):** Protocolos e guidelines gerais
+2. **SQL (Banco do Hospital):** Dados específicos do paciente (alergias, exames pendentes)
+3. **LLM fine-tuned:** Integra tudo e raciocina
+
+Se eu usasse apenas RAG, perdia contexto do paciente. Se usasse apenas SQL, o modelo não conheceria os protocolos. Juntos, a resposta fica muito mais rica.
+
+### Guardrails ANTES do LLM
+
+Bloquear uma pergunta imprópria **antes** de processar é melhor que deixar o LLM gerar e depois filtrar. Por quê?
+
+- É mais barato computacionalmente
+- É mais seguro (não gera nada impróprio)
+- É mais rápido (não precisa chamar o LLM)
+
+Então a ordem é: valida primeiro, processa depois.
+
+### JSON para Auditoria
+
+Registrar tudo em logs estruturados (JSON Lines) é diferente de logging em texto.
+
+Com JSON, posso:
+
+- Buscar "quais requisições foram bloqueadas?" facilmente
+- Analisar padrões de uso
+- Auditar compliance
+- Adicionar novos campos sem quebrar nada
 
 ---
 
@@ -87,11 +136,6 @@ class MedicalAssistant:
 - Integração com RAG ✅
 
 ---
-
-## Requisitos
-
-- Python 3.11+
-- (Opcional) GPU para fine-tuning
 
 ## Setup
 

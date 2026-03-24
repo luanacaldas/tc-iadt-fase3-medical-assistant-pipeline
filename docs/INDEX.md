@@ -28,7 +28,7 @@ Diagrama visual do fluxo LangChain (fonte Mermaid + versão renderizada)
 
 ### 4. Reprodução e Demonstração
 
-- **README.md:** setup local e pipeline completo
+- **../README.md:** setup local e pipeline completo
 - **COLAB_NOTEBOOK.md:** execução guiada no Colab
 - **Vídeo de demonstração:** https://youtu.be/vYB2mnsHh8c
 - **Google Colab:** https://colab.research.google.com/drive/1tYl1FrsS4Z60Lhsbge5t9sP79scWwFcX?usp=sharing
@@ -86,10 +86,9 @@ python -m src.run_academic_pipeline --run-train
 ## Arquivos de Referência
 
 - **TECHNICAL_REPORT.md** - Documentação técnica completa com metodologia
-- **DEVELOPMENT_NOTES.md** - Notas de desenvolvimento
 - **COLAB_NOTEBOOK.md** - Guia de execução no Colab
 - **arquitetura_assistente_medico.mmd** - Diagrama editável em Mermaid
 - **arquitetura_assistente_medico.html** - Diagrama renderizado em HTML
 - **Vídeo de demonstração:** https://youtu.be/vYB2mnsHh8c
 - **Google Colab:** https://colab.research.google.com/drive/1tYl1FrsS4Z60Lhsbge5t9sP79scWwFcX?usp=sharing
-- **README.md** - Instruções de setup
+- **../README.md** - Instruções de setup

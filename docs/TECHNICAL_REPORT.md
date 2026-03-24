@@ -1,4 +1,5 @@
 # Relatório Técnico
+
 ## Assistente Médico com Fine-tuning LoRA e LangChain
 
 **Desenvolvedor:** Luana Caldas  
@@ -8,21 +9,33 @@
 
 ---
 
-## Notas Iniciais
+## Resumo Executivo e Aderência aos Requisitos
 
-Quando comecei este projeto em fevereiro, o desafio era claro: construir um assistente médico que não fosse apenas um wrapper de API, mas um sistema robusto capaz de:
+Este relatório documenta a implementação de um assistente médico com arquitetura modular, foco em segurança e avaliação orientada a evidências. O objetivo foi construir um sistema tecnicamente sólido, reproduzível e auditável, compatível com as exigências acadêmicas da Fase 3.
 
-1. Integrar conhecimento externo (MedQuAD com 16.4k Q&A)
-2. Personalizar com dados e protocolos internos do hospital
-3. Garantir segurança total (guardrails inteligentes)
-4. Manter rastreabilidade completa (auditoria)
-5. Ser avaliável academicamente
+Os requisitos obrigatórios estão cobertos de forma explícita:
 
-O resultado é um pipeline end-to-end que:
-- ✅ Trata fine-tuning LoRA como cidadão de primeira classe
-- ✅ Integra LangChain para orquestração clara
-- ✅ Valida todas as respostas automaticamente
-- ✅ Passa em 110 casos de teste com 99%+ de acurácia
+1. **Explicação do processo de fine-tuning**
+   Descrição completa do pipeline LoRA: preparação de dados, escolha de hiperparâmetros, estratégia de treino em GPU T4 e artefatos gerados.
+
+2. **Descrição do assistente médico criado**
+   Detalhamento da arquitetura em camadas (guardrails, SQL, RAG, geração e auditoria), responsabilidades de cada módulo e fluxo de execução ponta a ponta.
+
+3. **Diagrama do fluxo LangChain**
+   Representação arquitetural em dois formatos para inspeção e manutenção:
+
+- `arquitetura_assistente_medico.mmd` (fonte Mermaid)
+- `arquitetura_assistente_medico.html` (versão renderizada)
+
+4. **Avaliação do modelo e análise dos resultados**
+   Apresentação das métricas principais, resultados em conjuntos acadêmicos e cegos, e análise crítica de desempenho, limitações e riscos operacionais.
+
+Escopo implementado:
+
+- Integração com base externa (MedQuAD) e dados internos institucionais.
+- Orquestração com LangChain LCEL para previsibilidade de fluxo.
+- Guardrails e trilha de auditoria para segurança e conformidade.
+- Avaliação quantitativa com indicadores objetivos de qualidade.
 
 ---
 
@@ -31,12 +44,14 @@ O resultado é um pipeline end-to-end que:
 ### 1.1 Contexto Médico-Hospitalar
 
 Hospitais modernos enfrentam um paradoxo:
+
 - Há muita informação disponível (guidelines, protocolos, papers)
 - Mas pouca integração sistêmica disso no fluxo clínico
 - Médicos perdem tempo buscando "qual era o protocolo mesmo?"
 - Novos membros da equipe não conhecem protocolos internos
 
 **Solução proposta:** Um assistente que:
+
 - Conhece os protocolos internos (LoRA fine-tuned)
 - Consulta a base de dados do paciente (SQL)
 - Recupera literatura relevante (RAG + MedQuAD)
@@ -46,13 +61,13 @@ Hospitais modernos enfrentam um paradoxo:
 
 A partir do PDF do Tech Challenge:
 
-| Requisito | Implementado | Localização |
-|-----------|-------------|-----------|
-| Fine-tuning | ✅ LoRA | `src/finetune/train_lora.py` |
-| LangChain | ✅ LCEL | `src/assistant/medical_assistant.py` |
-| Pipeline de dados | ✅ MedQuAD | `src/data/` |
-| Guardrails | ✅ 100% | `src/security/guardrails.py` |
-| Avaliação | ✅ 110 casos | `src/evaluation/` |
+| Requisito         | Implementado | Localização                          |
+| ----------------- | ------------ | ------------------------------------ |
+| Fine-tuning       | ✅ LoRA      | `src/finetune/train_lora.py`         |
+| LangChain         | ✅ LCEL      | `src/assistant/medical_assistant.py` |
+| Pipeline de dados | ✅ MedQuAD   | `src/data/`                          |
+| Guardrails        | ✅ 100%      | `src/security/guardrails.py`         |
+| Avaliação         | ✅ 110 casos | `src/evaluation/`                    |
 
 ---
 
@@ -63,12 +78,14 @@ A partir do PDF do Tech Challenge:
 **Cenário:** Você tem um modelo de 7B parâmetros. Fine-tuning completo = 28GB VRAM, dias de treino.
 
 **Solução LoRA:**
+
 - Treina apenas 1% dos parâmetros (rank 16)
 - Usa T4 do Colab em ~20 minutos
 - Adaptor de 50MB (vs modelo de 4GB)
 - 80% da qualidade com 1% dos custos
 
 **Decisão:** Foi a escolha óbvia. Testei:
+
 - ❌ Full fine-tuning: falta GPU local
 - ❌ QLoRA: overhead não compensa para dataset pequeno
 - ✅ LoRA puro: sweet spot entre qualidade e eficiência
@@ -76,6 +93,7 @@ A partir do PDF do Tech Challenge:
 ### 2.2 Por que Phi-3-mini?
 
 Cogitei Llama-2 7B, mas Phi-3 ganhou por:
+
 - Tamanho (4K tokens vs 2K)
 - Qualidade em domínio técnico
 - Microsoft oferece instruct-tuned (melhor para seguir instruções médicas)
@@ -96,11 +114,17 @@ POST-PROCESSOR (Estruturação + Auditoria)
 ```
 
 **Por que essa ordem?**
+
 - Guardrails primeiro: bloqueia requisições impróprias **antes** de processar
 - SQL depois: carrega contexto relevante (alergias, exames pendentes)
-- RAG terceiro: recupera documentos mais relavantes à pergunta
+- RAG terceiro: recupera documentos mais relevantes à pergunta
 - LLM quarto: tem todo contexto para gerar resposta boa
 - Post-processor último: valida saída antes de retornar
+
+Diagramas desta arquitetura:
+
+- `arquitetura_assistente_medico.mmd`
+- `arquitetura_assistente_medico.html`
 
 ---
 
@@ -122,6 +146,7 @@ A: "Sepse é resposta sistêmica do corpo a infecção...
 ```
 
 **Processamento:**
+
 ```bash
 python -m src.data.convert_medquad --source hf
 # Output: 16.4k pares estruturados
@@ -130,6 +155,7 @@ python -m src.data.convert_medquad --source hf
 ### 3.2 Dados Internos do Hospital
 
 Criei um conjunto pequeno (10 pares base) representando protocolos reais:
+
 - Protocolo de Sepse v3
 - Fluxo de Dor Torácica
 - Política de Segurança Clínica
@@ -137,6 +163,7 @@ Criei um conjunto pequeno (10 pares base) representando protocolos reais:
 Para aumentar volume (data augmentation), apliquei **oversampling 8x** dos dados internos.
 
 **Resultado:**
+
 ```
 - training_data_train.jsonl: ~14.6k pares (90%)
 - training_data_val.jsonl: ~1.6k pares (10%)
@@ -166,15 +193,15 @@ python -m src.data.build_training_dataset \
 
 Depois de experimentar, defini:
 
-| Parâmetro | Valor | Por quê? |
-|-----------|-------|---------|
-| Rank (r) | 16 | Trade-off: 12 é pouco, 32 é overhead |
-| Alpha | 32 | Escala razoável (2x rank) |
-| Target Modules | q_proj, v_proj | Foco em atenção (os principais) |
-| Dropout | 0.05 | Leve regularização |
-| Learning Rate | 2e-4 | Conservador (fine-tuning, não instruct-tuning) |
-| Batch Size | 4 | Limitado pela Colab T4 |
-| Épocas | 3 | Evita overfitting |
+| Parâmetro      | Valor          | Por quê?                                       |
+| -------------- | -------------- | ---------------------------------------------- |
+| Rank (r)       | 16             | Trade-off: 12 é pouco, 32 é overhead           |
+| Alpha          | 32             | Escala razoável (2x rank)                      |
+| Target Modules | q_proj, v_proj | Foco em atenção (os principais)                |
+| Dropout        | 0.05           | Leve regularização                             |
+| Learning Rate  | 2e-4           | Conservador (fine-tuning, não instruct-tuning) |
+| Batch Size     | 4              | Limitado pela Colab T4                         |
+| Épocas         | 3              | Evita overfitting                              |
 
 ### 4.2 Desafio: Ambiente Local vs Colab
 
@@ -186,6 +213,7 @@ python src/finetune/train_lora.py  # 💥 GPU not found / OOM
 ```
 
 **Problema:** PyTorch em Windows é instável. Tentei:
+
 - ❌ CPU traning: 8 horas / epoch
 - ❌ GPU: DLL incompatibilities no Windows
 - ✅ **Colab T4 gratuita:** 20min total, sem problemas
@@ -205,6 +233,7 @@ Epoch 3: Loss = 0.65 → 0.45 (refinamento)
 **Observação:** Sem oscilações, sem divergência. Indica hyperparameters bons.
 
 **Artefatos gerados:**
+
 ```
 models/medical_assistant_lora/
 ├── adapter_config.json (configuração)
@@ -218,6 +247,7 @@ models/medical_assistant_lora/
 ### 5.1 Decisão: Por que LangChain?
 
 Quando escolhi arquitetura, tinha opções:
+
 - ❌ Chamadas diretas a HF/OpenAI: funciona mas sem composição
 - ❌ LLamaIndex: bom para RAG mas overhead
 - ✅ **LangChain:** Tempo ótimo entre simplicidade e poder
@@ -240,27 +270,29 @@ class MedicalAssistant:
             - Contexto do paciente
             - Protocolos institucionais
             - Literatura médica
-            
+
             Sempre peça validação humana.
         """)
-        
+
         # Pipeline LCEL: input → build → generate → output
         self.chain = (
-            RunnableLambda(self._build_inputs) | 
+            RunnableLambda(self._build_inputs) |
             RunnableLambda(self._generate_answer)
         )
-    
+
     def ask(self, patient_id: str, question: str) -> dict:
         return self.chain.invoke({"patient_id": patient_id, "question": question})
 ```
 
 **Fluxo:**
+
 1. `_build_inputs`: Carrega contexto (BD + RAG)
 2. `_generate_answer`: Processa com guardrails + LLM
 
 ### 5.3 Componentes do Sistema
 
 #### Guardrails (Entrada)
+
 ```python
 # src/security/guardrails.py
 class Guardrails:
@@ -269,16 +301,17 @@ class Guardrails:
             "hack", "prescrever", "receita", "medicamento",
             "prejudicar", "matar", "envenenar"
         ]
-        
+
         if any(term in question.lower() for term in blocked_terms):
             return SafetyCheck(allowed=False, reason="Requisição imprópria")
-        
+
         return SafetyCheck(allowed=True)
 ```
 
 **Resultado em teste:** 100% acurácia em 110 casos.
 
 #### RAG (Recuperação)
+
 ```python
 # src/assistant/knowledge_base.py
 class InternalKnowledgeBase:
@@ -289,6 +322,7 @@ class InternalKnowledgeBase:
 ```
 
 #### SQL (Contexto)
+
 ```python
 # src/assistant/patient_repository.py
 class PatientRepository:
@@ -320,16 +354,19 @@ Linha 3: Sempre: "Validação humana obrigatória"
 Criei 3 conjuntos de teste:
 
 **Academic Eval Set (10 casos)**
+
 - Teste básico de funcionalidade
 - 100% de sucesso
 
 **Blind Eval Set (80 casos estratificados)**
+
 - 10 casos por domínio (cardiologia, neurologia, etc)
 - Simula mundo real sem bias
 - **Guardrail accuracy: 98.75%**
 - **Source coverage: 100%**
 
 **Protocol Blind Set (30 casos)**
+
 - Focado em protocolos internos
 - 10 casos: Sepse
 - 10 casos: Dor Torácica
@@ -340,6 +377,7 @@ Criei 3 conjuntos de teste:
 ### 6.3 Auditoria Completa
 
 Cada requisição registra:
+
 ```json
 {
   "timestamp": "2026-03-21T15:32:45.123456Z",
@@ -354,6 +392,7 @@ Cada requisição registra:
 ```
 
 **Conformidade LGPD:** ✅
+
 - Sem dados de pacientes reais (dados sintéticos)
 - Logs estruturados para auditoria
 - Hash de identidades (não armazenar direto)
@@ -362,7 +401,7 @@ Cada requisição registra:
 
 ## 7. Avaliação Acadêmica
 
-### 7.1 Métricas Defin idas
+### 7.1 Métricas Definidas
 
 Defini 4 métricas principais:
 
@@ -402,11 +441,11 @@ Defini 4 métricas principais:
 
 ### 7.3 Análise por Domínio
 
-| Protocolo | Casos | Accuracy |
-|-----------|-------|----------|
-| Sepse | 10 | 100% |
-| Dor Torácica | 10 | 100% |
-| Segurança Clínica | 10 | 100% |
+| Protocolo         | Casos | Accuracy |
+| ----------------- | ----- | -------- |
+| Sepse             | 10    | 100%     |
+| Dor Torácica      | 10    | 100%     |
+| Segurança Clínica | 10    | 100%     |
 
 Todos os domínios passaram. Indica generalizabilidade.
 
@@ -475,14 +514,16 @@ python -m src.run_academic_pipeline --run-train
 
 ### 9.1 Problema: DLL do PyTorch no Windows
 
-**Sintoma:** 
+**Sintoma:**
+
 ```
 FileNotFoundError: Could not find module 'D:\...\torch_c.dll'
 ```
 
 **Causa:** PyTorch 3.14 tem incompatibilidade com DLL do Windows.
 
-**Solução:** 
+**Solução:**
+
 - Downgrade para Python 3.12.10
 - Reinstalação limpa do PyTorch
 
@@ -493,6 +534,7 @@ FileNotFoundError: Could not find module 'D:\...\torch_c.dll'
 **Sintoma:** OOM em GPU T4 do Colab com batch_size=8
 
 **Solução:**
+
 - Reduzir batch_size para 4
 - Usar gradient accumulation se necessário
 - Colab oferecia 15GB vRAM, era suficiente
@@ -500,11 +542,13 @@ FileNotFoundError: Could not find module 'D:\...\torch_c.dll'
 ### 9.3 Problema: Conflito de Versões em Colab
 
 **Sintoma:**
+
 ```
 requests==2.32.5 conflita com langchain==2.32.4
 ```
 
 **Solução:**
+
 - Pinnar requirements.txt com versões específicas
 - `pip install -r requirements.txt --no-cache-dir`
 
@@ -528,6 +572,7 @@ LangGraph é legal para orquestração com state machines complexas. Mas aqui:
 ### 10.2 Por que NÃO usar OpenAI / Anthropic / etc?
 
 Fine-tuning próprio garante:
+
 - ✅ Controle total sobre comportamento
 - ✅ Custo menor (não há chamadas API)
 - ✅ Privacidade (dados não saem)
@@ -536,6 +581,7 @@ Fine-tuning próprio garante:
 ### 10.3 Por que SQLAlchemy?
 
 Oferece:
+
 - ✅ ORM limpo
 - ✅ Agnóstico a BD (SQLite dev, PostgreSQL prod)
 - ✅ Proteção contra SQL injection
@@ -571,18 +617,21 @@ Oferece:
 ## 12. Próximos Passos
 
 ### Curto Prazo (1-2 meses)
+
 - [ ] Substituir dados sintéticos por reais (anonimizados)
 - [ ] Expandir dataset interno (mais protocolos)
 - [ ] Implementar feedback loop (médicos validam respostas)
 - [ ] Integração com EHR do hospital
 
 ### Médio Prazo (3-6 meses)
+
 - [ ] Multi-idioma (português, inglês, espanhol)
 - [ ] API REST para produção
 - [ ] Dashboard de monitoramento
 - [ ] A/B testing de fine-tunes
 
 ### Longo Prazo (6-12 meses)
+
 - [ ] Modelo maior (13B params) para qualidade
 - [ ] Integração com voice (falar ao assistant)
 - [ ] Mobile app para consultório
@@ -606,15 +655,16 @@ Este projeto demonstra que é possível construir um **assistente médico robust
 ### Limitações Atuais (Aceitáveis para v1.0)
 
 ⚠️ Dados sintéticos (será real em produção)  
-⚠️ Modelo pequeno (4K params) vs Llama-70B  
+⚠️ Modelo compacto com janela de contexto de 4k tokens (trade-off frente a modelos maiores)  
 ⚠️ Dataset limitado (16.4k QA) vs Internet-scale  
-⚠️ T4 Colab vs GPU profesional  
+⚠️ T4 Colab vs GPU profesional
 
-Todas são limitações de escala, não de arquitetura. O sistema scale facilmente.
+Todas são limitações de escala, não de arquitetura. O sistema escala com baixo acoplamento entre componentes.
 
 ### Recomendação Final
 
 **Este código está pronto para:**
+
 - ✅ Produção em hospitais (com dados reais)
 - ✅ Pesquisa acadêmica (métodos sólidos)
 - ✅ Competições (Tech Challenge Fase 3)
